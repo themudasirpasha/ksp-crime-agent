@@ -1,0 +1,454 @@
+<div class="dashboard-shell">
+  
+  <!-- SIDEBAR (LEFT) -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="ksp-emblem-badge">
+        <svg viewBox="0 0 100 120" width="38" height="46">
+          <path d="M50 5 L90 20 L90 65 C90 90 50 115 50 115 C50 115 10 90 10 65 L10 20 Z" fill="#991b1b" stroke="#eab308" stroke-width="4"/>
+          <path d="M50 15 L80 27 L80 62 C80 82 50 102 50 102 C50 102 20 82 20 62 L20 27 Z" fill="#1e1b4b" stroke="#ca8a04" stroke-width="2"/>
+          <circle cx="50" cy="50" r="18" fill="#eab308"/>
+          <text x="50" y="56" font-size="18" font-weight="900" font-family="sans-serif" text-anchor="middle" fill="#7f1d1d">KSP</text>
+        </svg>
+      </div>
+      <div class="logo-text-block">
+        <span class="logo-title">KSP</span>
+        <span class="logo-subtitle">CRIME AI</span>
+      </div>
+    </div>
+
+    <!-- Active Profile Info -->
+    <div class="officer-profile-card">
+      <div class="officer-avatar">👮🏽‍♂️</div>
+      <div class="officer-info">
+        <h4 class="officer-name">{{ officerName }}</h4>
+        <p class="officer-badge-id">Badge: {{ officerBadge }}</p>
+        <span class="role-badge" [class]="officerRole">{{ officerRole.replace('_', ' ').toUpperCase() }}</span>
+      </div>
+    </div>
+
+    <!-- Navigation List -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Active Modules</div>
+      
+      <button class="nav-item" [class.active]="activeModule === 'chatbot'" (click)="switchModule('chatbot')">
+        <span class="nav-icon">🧠</span> Crime AI
+      </button>
+      
+      <button class="nav-item" [class.active]="activeModule === 'map'" (click)="switchModule('map')">
+        <span class="nav-icon">📍</span> Hotspot Map
+      </button>
+
+      <!-- Roles Investigator / Senior Inspector / Analyst have access to Network -->
+      <button *ngIf="officerRole !== 'sub_inspector' && officerRole !== 'policymaker'" 
+              class="nav-item" [class.active]="activeModule === 'network'" (click)="switchModule('network')">
+        <span class="nav-icon">🔗</span> Criminal Network
+      </button>
+
+      <!-- All except policymaker have access to Case Timeline -->
+      <button *ngIf="officerRole !== 'policymaker'"
+              class="nav-item" [class.active]="activeModule === 'caseSummary'" (click)="switchModule('caseSummary')">
+        <span class="nav-icon">📋</span> Case Summary & Timeline
+      </button>
+
+      <button *ngIf="officerRole !== 'sub_inspector'" 
+              class="nav-item" [class.active]="activeModule === 'trends'" (click)="switchModule('trends')">
+        <span class="nav-icon">📊</span> Crime Trends
+      </button>
+
+      <div class="nav-divider"></div>
+
+      <button class="nav-item logout-btn" (click)="logout()">
+        <span class="logout-icon-badge">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </span>
+        <span class="logout-text">Log Out</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- MAIN WORKSPACE (RIGHT) -->
+  <main class="main-workspace">
+    <!-- Top Header -->
+    <header class="main-header">
+      <div class="header-breadcrumb">
+        <span class="meta-label">Karnataka State Police</span>
+        <h2 class="section-title">Digital Investigation & Decision Support</h2>
+      </div>
+
+      <div class="system-status">
+        <span class="status-indicator"></span>
+        <span class="status-label">Secure Audit Log: **ACTIVE** 🔒</span>
+      </div>
+    </header>
+
+    <!-- CONTENT MODULES -->
+    <div class="module-container">
+
+      <!-- 1. CHATBOT ASSISTANT -->
+      <div *ngIf="activeModule === 'chatbot'" class="chat-module-grid">
+        <div class="chat-main-card">
+          <div class="chat-header-bar">
+            <h3>KSP CrimeAI Cognitive Chatbot</h3>
+            <button class="export-btn" (click)="exportChat()">📄 Export Conversation (PDF)</button>
+          </div>
+
+          <div class="chat-messages-container">
+            <div *ngFor="let msg of chatHistory" class="message-row" [class.user]="msg.role === 'user'">
+              <div class="message-avatar">{{ msg.role === 'user' ? '👮🏽‍♂️' : '🏵️' }}</div>
+              <div class="message-bubble" [class.blocked]="msg.isBlocked">
+                
+                <!-- standard response text with prefix matching Doc1 -->
+                <p class="message-text" *ngIf="!msg.isTable">
+                  <strong *ngIf="msg.role === 'user'" class="user-prefix" style="color: #eab308; font-weight: 700; margin-right: 4px;">{{ officerName }} ({{ officerRole.replace('_', ' ').toUpperCase() }}):</strong>
+                  <strong *ngIf="msg.role === 'assistant'" class="agent-prefix" style="color: #fbbf24; font-weight: 700; margin-right: 4px;">CrimeAI:</strong>
+                  <span [innerHTML]="formatMarkdown(msg.content)"></span>
+                </p>
+
+                <!-- custom data table inside chat (FIR details etc) -->
+                <div *ngIf="msg.isTable" class="table-container-wrapper">
+                  <p class="table-title">
+                    <strong *ngIf="msg.role === 'assistant'" class="agent-prefix" style="color: #fbbf24; font-weight: 700; margin-right: 4px;">CrimeAI:</strong>
+                    <strong>FIR List matches found:</strong>
+                  </p>
+                  
+                  <table class="chat-data-table">
+                    <thead>
+                      <tr>
+                        <th *ngFor="let header of msg.tableHeaders">{{ header }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let row of msg.tableData">
+                        <td *ngFor="let header of msg.tableHeaders" [class.fir-highlight]="header.toLowerCase().includes('fir')">
+                          <strong *ngIf="header.toLowerCase().includes('name') || header.toLowerCase().includes('accused') || header.toLowerCase().includes('ಹಸರು')">{{ row[header] }}</strong>
+                          <span *ngIf="!header.toLowerCase().includes('name') && !header.toLowerCase().includes('accused') && !header.toLowerCase().includes('ಹಸರು')">{{ row[header] }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <span class="message-time">{{ msg.timestamp }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Bar -->
+          <div class="chat-input-bar">
+            <button class="voice-mic-btn" [class.recording]="isVoiceRecording" (click)="simulateVoiceQuery()" title="Speak in Kannada/English">
+              {{ isVoiceRecording ? '🔴 Rec' : '🎙️' }}
+            </button>
+            <input type="text" [(ngModel)]="chatInput" (keyup.enter)="sendChatMessage()" placeholder="Type query (e.g. 'What is the FIR status for case 1023?' or in Kannada)...">
+            <button class="chat-send-btn" (click)="sendChatMessage()">Send ↗</button>
+          </div>
+        </div>
+
+        <!-- Right Side Audit Log Tracker -->
+        <div class="audit-log-card">
+          <h4>Secure Audit Activity</h4>
+          <div class="audit-timeline">
+            <div *ngFor="let log of auditLogs" class="audit-item">
+              <span class="audit-time">{{ log.time }}</span>
+              <p class="audit-desc">{{ log.log }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. HOTSPOT MAP -->
+      <div *ngIf="activeModule === 'map'" class="map-dashboard-container">
+        
+        <!-- Top Bar for Filter and Title -->
+        <div class="map-top-bar">
+          <h3>BENGALURU CRIME HOTSPOT MAP (Theft Analysis)</h3>
+          <div class="map-filter-row">
+            <label>Filter:</label>
+            <select [(ngModel)]="selectedCrimeType" (change)="loadHotspots()">
+              <option value="all">All Crimes</option>
+              <option value="Vehicle Theft">Vehicle Theft</option>
+              <option value="House Breaking">House Breaking</option>
+              <option value="Robbery">Robbery</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Split Maps Container -->
+        <div class="split-maps-grid">
+          <!-- Karnataka Zoomed-out map -->
+          <div class="map-card-wrapper">
+            <span class="map-header-label left">KARNATAKA</span>
+            <div #mapKarnatakaContainer class="leaflet-map-split"></div>
+          </div>
+
+          <!-- Bengaluru Zoomed-in street view map -->
+          <div class="map-card-wrapper">
+            <span class="map-header-label right">BENGALURU - CRIME HEATMAP (Theft)</span>
+            <div #mapBengaluruContainer class="leaflet-map-split"></div>
+            
+            <!-- Floating Analysis Widget overlay exactly like screenshot -->
+            <div class="floating-heatmap-overlay">
+              <h4 class="overlay-title">BENGALURU - CRIME HEATMAP (Theft)</h4>
+              <p class="overlay-stat"><strong>42% theft increase</strong> during Ugadi festival</p>
+              <span class="overlay-locations">Jayanagar & Koramangala sectors flagged</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Charts Panel exactly like screenshot -->
+        <div class="map-charts-grid">
+          <!-- Donut Chart -->
+          <div class="chart-card-small">
+            <h4>Crime Distribution by Region</h4>
+            <div class="canvas-holder">
+              <canvas #mapDonutCanvas></canvas>
+            </div>
+          </div>
+
+          <!-- Bar Chart -->
+          <div class="chart-card-small">
+            <h4>Crime Count Density</h4>
+            <div class="canvas-holder">
+              <canvas #mapBarCanvas></canvas>
+            </div>
+          </div>
+
+          <!-- Line Chart -->
+          <div class="chart-card-small">
+            <h4>Monthly Density Trend</h4>
+            <div class="canvas-holder">
+              <canvas #mapLineCanvas></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. CRIMINAL NETWORK GRAPH (Doc 1 Exact Design) -->
+      <div *ngIf="activeModule === 'network'" class="network-fullscreen-container">
+        
+        <!-- Header -->
+        <div class="network-top-bar">
+          <h3>Criminal Network Graph</h3>
+          <div class="network-search-bar">
+            <input type="text" [(ngModel)]="offenderSearchId" placeholder="Enter Offender ID (e.g. OFF-00194)" />
+            <button (click)="initNetworkGraph()">🔍 Search</button>
+          </div>
+        </div>
+
+        <!-- Main Canvas Frame -->
+        <div class="graph-canvas-frame">
+          <div #networkContainer class="d3-network-element"></div>
+
+          <!-- Top-Right Gang Alert Banner -->
+          <div class="gang-alert-banner">
+            <span>ಸಂಘಟಿತ ಗ್ಯಾಂಗ್ ಪತ್ತೆಯಾಗಿದೆ ⚠️</span>
+          </div>
+
+          <!-- Bottom-Right Floating Highlight Box -->
+          <div class="gang-highlight-box">
+            <p><strong>ಗ್ಯಾಂಗ್ ಪತ್ತೆ ಹೈಲೈಟ್:</strong> 5 ಮಂದಿ ಆರೋಪಿಗಳು, 3 ಬಲಿಪಶುಗಳು ಮತ್ತು 2 ಸ್ಥಳಗಳೊಂದಿಗೆ ಸಂಪರ್ಕ ಹೊಂದಿದ್ದಾರೆ</p>
+          </div>
+        </div>
+
+        <!-- Bottom Footer Metrics Bar -->
+        <div class="network-footer-bar">
+          <div class="footer-metric-col">
+            <span class="footer-metric-lbl">ಒಟ್ಟು ನೋಡ್‌ಗಳು</span>
+            <span class="footer-metric-num">260</span>
+          </div>
+          <div class="footer-metric-col">
+            <span class="footer-metric-lbl">ಸಂಪರ್ಕಗಳು</span>
+            <span class="footer-metric-num">357</span>
+          </div>
+          <div class="footer-metric-col">
+            <span class="footer-metric-lbl">ಗುರುತಿಸಲಾದ ಗುಂಪುಗಳು</span>
+            <span class="footer-metric-num">20</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 4. CASE SUMMARY & TIMELINE (Doc 1 Screenshot 2 Exact Design) -->
+      <div *ngIf="activeModule === 'caseSummary'" class="case-timeline-layout-grid">
+        
+        <!-- Left & Center Workspace Container -->
+        <div class="case-main-workspace-card">
+          
+          <!-- Top Case Summary Box with Pill Badge -->
+          <div class="case-summary-boxed-container">
+            <div class="summary-box-header">
+              <span class="box-title">Case Summary</span>
+              <span class="ai-badge-pill">AI-GENERATED CASE SUMMARY</span>
+            </div>
+            
+            <div class="summary-text-content">
+              <p class="english-summary-para" [innerHTML]="formatMarkdown(caseSummaryText)"></p>
+            </div>
+          </div>
+
+          <!-- Case Timeline Section -->
+          <div class="case-timeline-boxed-container">
+            <div class="timeline-box-header">
+              <h3>Case Timeline</h3>
+              <span class="collapse-icon">˄</span>
+            </div>
+
+            <div class="timeline-events-list">
+              <!-- Item 1 -->
+              <div class="timeline-event-row">
+                <span class="event-date">25 May 24</span>
+                <div class="event-node-icon star">⭐</div>
+                <div class="event-details-col">
+                  <h4 class="event-title">FIR Registration</h4>
+                  <p class="event-desc">FIR #01/2024</p>
+                </div>
+                <div class="event-officer-badge">
+                  <span class="officer-pic">👮🏽‍♂️</span>
+                  <span class="officer-name">S.I. Arjun Patil</span>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="timeline-event-row">
+                <span class="event-date">29 May 24</span>
+                <div class="event-node-icon chat">💬</div>
+                <div class="event-details-col">
+                  <h4 class="event-title">Interrogation of Shivanand</h4>
+                  <p class="event-desc">Interrogation of Shivanand</p>
+                </div>
+                <div class="event-officer-badge">
+                  <span class="officer-pic">👮🏽‍♂️</span>
+                  <span class="officer-name">S.I. Arjun Patil</span>
+                </div>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="timeline-event-row">
+                <span class="event-date">28 May 24</span>
+                <div class="event-node-icon upload">☁️</div>
+                <div class="event-details-col">
+                  <h4 class="event-title">Evidence Upload</h4>
+                  <p class="event-desc">CCTV Footage uploaded</p>
+                </div>
+                <div class="event-officer-badge">
+                  <span class="officer-pic">👮🏽‍♂️</span>
+                  <span class="officer-name">S.I. Arjun Patil</span>
+                </div>
+              </div>
+
+              <!-- Item 4 -->
+              <div class="timeline-event-row">
+                <span class="event-date">26 May 24</span>
+                <div class="event-node-icon upload">☁️</div>
+                <div class="event-details-col">
+                  <h4 class="event-title">Evidence Upload</h4>
+                  <p class="event-desc">Fingerprint data uploaded</p>
+                </div>
+                <div class="event-officer-badge">
+                  <span class="officer-pic">👮🏽‍♂️</span>
+                  <span class="officer-name">S.I. Arjun Patil</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Linked Details Bottom Footer Bar -->
+          <div class="case-linked-footer-bar">
+            <div class="footer-meta-col">
+              <span class="meta-label">Linked People:</span>
+              <span class="meta-val">Victims, 3 Suspects, 1 Sixaranta, Bangoora, 2 Shivanwa, Jajyblusa ...</span>
+            </div>
+            <div class="footer-meta-col">
+              <span class="meta-label">Total Evidence Items:</span>
+              <span class="meta-val">15</span>
+            </div>
+            <div class="footer-meta-col">
+              <span class="meta-label">Linked Locations:</span>
+              <span class="meta-val">Jayanagar, Bang...</span>
+            </div>
+            <div class="footer-meta-col">
+              <span class="meta-label">Total Evidence Items:</span>
+              <span class="meta-val">15</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side Audit Log Sidebar -->
+        <div class="case-audit-sidebar-card">
+          <h4>Secure Audit Log Activity</h4>
+          <div class="audit-log-vertical-list">
+            <div class="audit-log-row">
+              <span class="log-time">14:32</span>
+              <span class="log-text">- S.I. Arjun Patil accessed Case #221</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:32</span>
+              <span class="log-text">- S.I. Arjun Patil uploaded Case #221</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:34</span>
+              <span class="log-text">- S.I. Arjun Patil accessed Case #221</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:34</span>
+              <span class="log-text">- S.I. Arjun Patil accessed Case #221</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:35</span>
+              <span class="log-text">- S.I. Arjun Patil accessed by the intent orchestrator.actum: ...</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:35</span>
+              <span class="log-text">- S.I. Arjun Patil accessed Case #221</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:34</span>
+              <span class="log-text">- Forensic Analyst uploaded CCTV data #221</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:34</span>
+              <span class="log-text">- S.I. Arjun Patil accessed Case #221</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:34</span>
+              <span class="log-text">- Forensic Analyst uploaded CCTV data</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:34</span>
+              <span class="log-text">- Forensic Analyst uploaded CCTV data</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:34</span>
+              <span class="log-text">- Forensic Analyst uploaded S.I. Patil</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:35</span>
+              <span class="log-text">- S.I. Arjun Patil accessed Case #221</span>
+            </div>
+            <div class="audit-log-row">
+              <span class="log-time">14:35</span>
+              <span class="log-text">- AI Summary generated by S.I. Patil</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 5. CRIME TRENDS -->
+      <div *ngIf="activeModule === 'trends'" class="trends-module-card">
+        <div class="card-header">
+          <h3>Crime Category & Density Analytics</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas #chartCanvas></canvas>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

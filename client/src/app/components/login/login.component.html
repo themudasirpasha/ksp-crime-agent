@@ -1,0 +1,174 @@
+<div class="login-container">
+  <div class="login-card">
+    
+    <!-- Header -->
+    <div class="card-header">
+      <div class="logo-area">
+        <div class="shield-badge">🛡️</div>
+        <div class="header-text">
+          <span class="sub-agency">KARNATAKA STATE POLICE</span>
+          <h1 class="main-title">KSP CrimeAI</h1>
+        </div>
+      </div>
+      
+      <button class="top-toggle-btn" (click)="toggleMode()">
+        {{ isRegisterMode ? 'Officer Sign In' : 'Officer Registration' }}
+      </button>
+    </div>
+
+ 
+    <!-- Main Forms (Always visible so they are interactive and match Doc1) -->
+    <div class="form-content">
+      
+      <!-- REGISTRATION MODE (Matches Page 1 of Doc1) -->
+      <div *ngIf="isRegisterMode" class="form-grid">
+        <div class="form-group">
+          <label>FULL NAME</label>
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input type="text" [(ngModel)]="fullName" placeholder="Arjun Patil">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>BADGE / SERVICE ID</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🪪</span>
+            <input type="text" [(ngModel)]="badgeId" placeholder="KSP-BLR-04821">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>DESIGNATION</label>
+          <div class="input-wrapper">
+            <select [ngModel]="designation" (ngModelChange)="designation = $event">
+              <option value="Sub-Inspector">Sub-Inspector</option>
+              <option value="Inspector">Inspector</option>
+              <option value="Senior Inspector">Senior Inspector</option>
+              <option value="Analyst">Analyst</option>
+              <option value="Policymaker">Policymaker</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>ACCESS ROLE</label>
+          <div class="input-wrapper">
+            <select [ngModel]="role" (ngModelChange)="selectRole($event)">
+              <option value="sub_inspector">Investigator (Sub-Inspector)</option>
+              <option value="inspector">Investigator (Inspector)</option>
+              <option value="senior_inspector">Senior Inspector</option>
+              <option value="analyst">Analyst</option>
+              <option value="policymaker">Policymaker</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>DISTRICT</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📍</span>
+            <input type="text" [(ngModel)]="district" placeholder="Bengaluru Urban">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>POLICE STATION</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🏢</span>
+            <input type="text" [(ngModel)]="policeStation" placeholder="Jayanagar PS">
+          </div>
+        </div>
+
+        <div class="form-group col-span-2">
+          <label>OFFICIAL EMAIL ADDRESS</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input type="email" [(ngModel)]="email" placeholder="arjun.patil@ksp.gov.in">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>PASSWORD</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" [(ngModel)]="password">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>CONFIRM PASSWORD</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" [(ngModel)]="confirmPassword">
+          </div>
+        </div>
+
+        <!-- Preferred Language Section -->
+        <div class="form-group col-span-2">
+          <label>PREFERRED LANGUAGE</label>
+          <div class="language-selector">
+            <button type="button" class="lang-btn" [class.active]="preferredLanguage === 'kn'" (click)="selectLanguage('kn')">ಕನ್ನಡ</button>
+            <button type="button" class="lang-btn" [class.active]="preferredLanguage === 'en'" (click)="selectLanguage('en')">English</button>
+            <button type="button" class="lang-btn" [class.active]="preferredLanguage === 'hi'" (click)="selectLanguage('hi')">हिंदी</button>
+            <button type="button" class="lang-btn" [class.active]="preferredLanguage === 'ur'" (click)="selectLanguage('ur')">اردو</button>
+          </div>
+        </div>
+
+        <!-- Governance Checkbox -->
+        <div class="form-group col-span-2 terms-wrapper">
+          <input type="checkbox" id="terms" [(ngModel)]="termsAccepted">
+          <label for="terms">
+            Access will be granted only after verification by your Superintendent of Police. All activity on this platform is logged and auditable under KSP data governance policy.
+          </label>
+        </div>
+
+        <button class="primary-btn col-span-2" (click)="handleRegister()">
+          Submit Registration Request ↗
+        </button>
+
+        <p class="toggle-link col-span-2">
+          Already registered? <span class="highlight" (click)="toggleMode()">Sign in here</span>
+        </p>
+      </div>
+
+      <!-- SIGN-IN MODE -->
+<div *ngIf="!isRegisterMode" class="login-fields">
+  <div class="form-group">
+    <label>OFFICER ID / EMAIL</label>
+    <div class="input-wrapper">
+      <span class="input-icon">🪪</span>
+      <input type="text" [(ngModel)]="loginId" placeholder="KSP-BLR-04821">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>SECURE PASSWORD</label>
+    <div class="input-wrapper">
+      <span class="input-icon">🔒</span>
+      <input type="password" [(ngModel)]="loginPassword" placeholder="••••••••">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>ACTIVE DUTY ROLE (FOR HACKATHON DEMO)</label>
+    <div class="input-wrapper">
+      <select [(ngModel)]="loginRole">
+        <option value="sub_inspector">Sub-Inspector (Basic FIR/Location)</option>
+        <option value="inspector">Inspector / Investigator (Full Search & Network)</option>
+        <option value="senior_inspector">Senior Inspector (Full Access)</option>
+        <option value="analyst">Analyst (Database Access & Reports)</option>
+        <option value="policymaker">Policymaker (Aggregate Trends & Summary)</option>
+      </select>
+    </div>
+  </div>
+  <button class="primary-btn" (click)="handleLogin()">
+    Access Command Center 🛡️
+  </button>
+  <p class="toggle-link">
+    Need an account? <span class="highlight" (click)="toggleMode()">Register new officer</span>
+  </p>
+</div>
+
+    </div>
+
+  </div>
+</div>

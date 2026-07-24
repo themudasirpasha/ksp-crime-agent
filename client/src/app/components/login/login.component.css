@@ -1,0 +1,318 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #0b0f19;
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 680px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  padding: 2.5rem;
+  box-sizing: border-box;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.shield-badge {
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.4));
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-agency {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.main-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.top-toggle-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.top-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #eab308;
+  color: #eab308;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  color: #64748b;
+  pointer-events: none;
+  font-size: 0.95rem;
+}
+
+.input-wrapper input,
+.input-wrapper select {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-wrapper select {
+  padding-left: 1rem; /* drop downs don't need absolute left icons */
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+  border-color: #eab308;
+  box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.15);
+  background: #090d16;
+}
+
+.language-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.lang-btn {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  padding: 0.6rem 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.lang-btn.active {
+  background: rgba(234, 179, 8, 0.15);
+  border-color: #eab308;
+  color: #eab308;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.1);
+}
+
+.terms-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.terms-wrapper input[type="checkbox"] {
+  accent-color: #eab308;
+  margin-top: 0.2rem;
+  cursor: pointer;
+}
+
+.terms-wrapper label {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #64748b;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(234, 179, 8, 0.4);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+.toggle-link {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 1rem;
+}
+
+.highlight {
+  color: #eab308;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.highlight:hover {
+  color: #fef08a;
+}
+
+.login-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Catalyst Wrapper styling */
+.catalyst-auth-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.auth-title {
+  font-size: 1rem;
+  color: #eab308;
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.auth-helper {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-align: center;
+  margin: 0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-content {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.divider-text {
+  text-align: center;
+  font-size: 0.7rem;
+  color: #475569;
+  letter-spacing: 0.1em;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.divider-text::before,
+.divider-text::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 25%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.divider-text::before {
+  left: 0;
+}
+
+.divider-text::after {
+  right: 0;
+}

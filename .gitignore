@@ -3,3 +3,4 @@ node_modules/
 catalyst-debug.log
 .env
 __pycache__/
+client/*.zip
