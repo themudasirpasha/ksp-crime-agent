@@ -1,0 +1,4 @@
+flask
+requests
+zcatalyst-sdk
+flask-cors

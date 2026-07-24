@@ -1,0 +1,36 @@
+{
+  "defaults": {
+    "project": 1,
+    "env": 2
+  },
+  "actives": {
+    "project": 1,
+    "env": 2
+  },
+  "projects": [
+    {
+      "idx": 1,
+      "id": "43110000000018001",
+      "name": "ksp-crime-agent",
+      "domain": {
+        "id": "50042784760",
+        "name": "ksp-crime-agent-60072886153.development"
+      },
+      "timezone": "Asia/Kolkata",
+      "env": [
+        {
+          "idx": 1,
+          "id": "50042788652",
+          "name": "Production",
+          "type": 1
+        },
+        {
+          "idx": 2,
+          "id": "60072886153",
+          "name": "Development",
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

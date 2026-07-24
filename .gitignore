@@ -1,0 +1,5 @@
+node_modules/
+.build/
+catalyst-debug.log
+.env
+__pycache__/

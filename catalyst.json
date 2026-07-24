@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "source": "functions",
+    "targets": ["ksp_crime_agent_function"],
+    "ignore": []
+  },
+  "client": {
+    "source": "client"
+  }
+}

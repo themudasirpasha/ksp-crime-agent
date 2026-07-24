@@ -1,0 +1,11 @@
+{
+    "deployment": {
+        "name": "ksp_crime_agent_function",
+        "stack": "python_3_12",
+        "type": "advancedio",
+        "env_variables": {}
+    },
+    "execution": {
+        "main": "main.py"
+    }
+}
